@@ -1,7 +1,8 @@
 import sys
 from PyQt5.Qt import *
-from PyQt5.QtWidgets import QApplication, QTableWidgetItem
+from PyQt5.QtWidgets import QApplication
 from PyQt5 import QtWidgets
+import main_code
 
 
 class Error(QWidget):
@@ -29,6 +30,20 @@ class Creator(QWidget):
         textbox_about_creator.setFont(QFont('Comfortaa', 18))
         self.window_about_creator.show()
 
+
+class Calc(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.window_about_prog = QWidget()
+        self.window_about_prog.setWindowTitle('About programm')
+        self.window_about_prog.resize(500, 200)
+        textbox_about_creator = QLabel(self.window_about_prog)
+        textbox_about_creator.setText("Кодирование сообщения в картинку.")
+        textbox_about_creator.move(2, 40)
+        textbox_about_creator.setFont(QFont('Comfortaa', 18))
+        self.window_about_prog.show()
+
+
 class App(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -39,7 +54,7 @@ class App(QWidget):
         self.window_table = None
         self.answer = ''
         self.window = QWidget()
-        self.window.setWindowTitle('Calculator')
+        self.window.setWindowTitle('Coder')
         type_font = 'Comfortaa'
         font_size = 18
 
@@ -52,51 +67,55 @@ class App(QWidget):
         self.grid.addWidget(self.menubar, 0, 8)
 
         self.txtMathFunc = QLabel()
-        self.txtMathFunc.setText('Function')
+        self.txtMathFunc.setText('Message')
         self.grid.addWidget(self.txtMathFunc, 0, 0)
 
-        self.inpMathFunc = QLineEdit()
-        self.inpMathFunc.setFixedSize(265, 40)
-        self.inpMathFunc.setFont(QFont(type_font, font_size))
-        self.grid.addWidget(self.inpMathFunc, 1, 0, 1, 4)
+        self.inpMessage = QLineEdit()
+        self.inpMessage.setFixedSize(265, 40)
+        self.inpMessage.setFont(QFont(type_font, font_size))
+        self.grid.addWidget(self.inpMessage, 1, 0, 1, 4)
 
-        self.txtStart = QLabel()
-        self.txtStart.setText('Start num')
-        self.grid.addWidget(self.txtStart, 2, 0)
+        self.txtFile = QLabel()
+        self.txtFile.setText('File')
+        self.grid.addWidget(self.txtFile, 2, 0)
 
-        self.inpNumStart = QLineEdit()
-        self.inpNumStart.setFixedSize(130, 40)
-        self.inpNumStart.setFont(QFont(type_font, font_size))
-        self.grid.addWidget(self.inpNumStart, 3, 0, 3, 2)
+        self.inpFile = QLineEdit()
+        self.inpFile.setFixedSize(545, 40)
+        self.inpFile.setFont(QFont(type_font, font_size))
+        self.grid.addWidget(self.inpFile, 3, 0, 3, 11)
 
-        self.txtFinish = QLabel()
-        self.txtFinish.setText('Finish num')
-        self.grid.addWidget(self.txtFinish, 2, 2)
+        self.btnFile = QPushButton('Browse file')
+        self.btnFile.setFixedSize(265, 40)
+        self.btnFile.setFont(QFont(type_font, font_size))
+        self.grid.addWidget(self.btnFile, 1, 5, 1, 9)
+        self.btnFile.clicked.connect(self.browse_file)
 
         self.btnEnter = QPushButton('Enter')
-        self.btnEnter.setFixedSize(265, 40)
+        self.btnEnter.setFixedSize(545, 40)
         self.btnEnter.setFont(QFont(type_font, font_size))
-        self.grid.addWidget(self.btnEnter, 7, 5, 7, 9)
+        self.grid.addWidget(self.btnEnter, 6, 0, 6, 11)
         self.btnEnter.clicked.connect(self.funcEnter)
         self.window.show()
 
-
     def funcEnter(self):
-        pass
-
-
-    def new_window(self, res_arr):
-        self.window_table = QWidget()
-        self.window_table.setWindowTitle('Calculator')
-        self.vtable = QtWidgets.QTableWidget(self.window_table)
-        self.vtable.setFixedSize(1400, 600)
-
+        file = self.inpFile.text()
+        if file[-4:] == '.bmp':
+            main_code.coding(file, self.inpMessage.text())
+        else:
+            self.error_func()
 
     def about_creator_func(self):
         self.creator_inform = Creator()
 
     def about_prog_func(self):
         self.prog_inf = Calc()
+
+    def error_func(self):
+        self.err = Error()
+
+    def browse_file(self):
+        wb_patch = QtWidgets.QFileDialog.getOpenFileName()[0]
+        self.inpFile.setText(wb_patch)
 
 
 def main():
